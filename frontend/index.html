@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <title>Pacman</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+    <div id="map-menu" style="display:none;">MapMenu (placeholder)</div>
+    <div id="gacha-menu" style="display:none;">GachaMenu (placeholder)</div>
+    <div id="skin-menu" style="display:none;">SkinMenu (placeholder)</div>
+    <div id="settings-menu" style="display:none;">Settings (placeholder)</div>
+    <script type="module">
+        import { MainMenuPanel } from './js/view/MainMenuPanel.js';
+        import { MainMenuController } from './js/Controller/MainMenuController.js';
+
+        const mainMenuController = new MainMenuController({
+            wsUrl: 'ws://localhost:8080/ws/menu', // đổi lại nếu backend chạy port/host khác
+            screens: {
+                MapMenu: document.getElementById('map-menu'),
+                GachaMenu: document.getElementById('gacha-menu'),
+                SkinMenu: document.getElementById('skin-menu'),
+                Settings: document.getElementById('settings-menu'),
+            },
+        });
+
+        const menu = new MainMenuPanel(mainMenuController);
+        document.getElementById('app').appendChild(menu.getElement());
+    </script>
+
+</body>
+</html>
