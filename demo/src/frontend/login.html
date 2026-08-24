@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PAC·MAN — INSERT COIN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0221;
+    --panel: #170a33;
+    --panel-edge: #2c1660;
+    --yellow: #FFD400;
+    --pink: #FF2E6C;
+    --cyan: #29F6FF;
+    --text: #F2EFFF;
+    --muted: #7A72A6;
+    --danger: #FF5C5C;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(255,212,0,0.06), transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(255,46,108,0.08), transparent 40%);
+    font-family: 'Space Mono', monospace;
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Signature: CRT scanline overlay */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.035) 0px,
+      rgba(255,255,255,0.035) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    mix-blend-mode: overlay;
+  }
+
+  .cabinet {
+    width: min(380px, 92vw);
+    background: var(--panel);
+    border: 2px solid var(--panel-edge);
+    border-radius: 6px;
+    box-shadow:
+      0 0 0 6px var(--bg),
+      0 0 0 8px var(--panel-edge),
+      0 20px 60px rgba(0,0,0,0.6);
+    padding: 32px 26px 26px;
+    position: relative;
+  }
+
+  .logo {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 15px;
+    text-align: center;
+    color: var(--yellow);
+    letter-spacing: 1px;
+    line-height: 1.8;
+    text-shadow: 0 0 10px rgba(255,212,0,0.5);
+  }
+  .logo span { color: var(--pink); }
+
+  .menu {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    margin: 22px 0 26px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+  }
+  .menu button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 6px 4px;
+    position: relative;
+    letter-spacing: 1px;
+  }
+  .menu button.active { color: var(--cyan); }
+  .menu button.active::before {
+    content: "▶";
+    position: absolute;
+    left: -16px;
+    color: var(--yellow);
+    animation: blink 0.9s steps(1) infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  form { display: none; flex-direction: column; gap: 14px; }
+  form.active { display: flex; }
+
+  label {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  input {
+    width: 100%;
+    background: #0d0221;
+    border: 1px solid var(--panel-edge);
+    border-radius: 3px;
+    padding: 11px 12px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  input:focus {
+    border-color: var(--cyan);
+    box-shadow: 0 0 0 2px rgba(41,246,255,0.15);
+  }
+
+  .field { display: flex; flex-direction: column; gap: 6px; }
+
+  .submit {
+    margin-top: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    background: var(--yellow);
+    color: #1a0a3d;
+    border: none;
+    border-radius: 3px;
+    padding: 13px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: transform 0.08s ease, background 0.15s ease;
+  }
+  .submit:hover { background: #ffe14d; }
+  .submit:active { transform: scale(0.97); }
+  .submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .status {
+    min-height: 18px;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 12px;
+    letter-spacing: 0.3px;
+  }
+  .status.error { color: var(--danger); }
+  .status.ok { color: var(--cyan); }
+
+  .hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 10px;
+    margin-top: 18px;
+    letter-spacing: 0.5px;
+  }
+  .hint .caret {
+    display: inline-block;
+    width: 7px;
+    background: var(--muted);
+    animation: blink 1s steps(1) infinite;
+  }
+</style>
+</head>
+<body>
+
+  <div class="cabinet">
+    <div class="logo">PAC<span>·</span>MAN<br /><span style="font-size:9px;color:var(--muted)">ARCADE LOGIN</span></div>
+
+    <div class="menu">
+      <button id="tabLogin" class="active" onclick="switchTab('login')">LOGIN</button>
+      <button id="tabRegister" onclick="switchTab('register')">REGISTER</button>
+    </div>
+
+    <form id="loginForm" class="active" onsubmit="return handleLogin(event)">
+      <div class="field">
+        <label for="loginUsername">Player Name</label>
+        <input id="loginUsername" type="text" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required />
+      </div>
+      <button class="submit" type="submit">▶ START GAME</button>
+    </form>
+
+    <form id="registerForm" onsubmit="return handleRegister(event)">
+      <div class="field">
+        <label for="regUsername">Player Name</label>
+        <input id="regUsername" type="text" autocomplete="username" required />
+      </div>
+      <div class="field">
+        <label for="regPassword">Password</label>
+        <input id="regPassword" type="password" autocomplete="new-password" minlength="6" required />
+      </div>
+      <button class="submit" type="submit">▶ CREATE PLAYER</button>
+    </form>
+
+    <div id="status" class="status"></div>
+    <div class="hint">PRESS ENTER TO CONTINUE<span class="caret">&nbsp;</span></div>
+  </div>
+
+  <script src="auth.js"></script>
+  <script>
+    function switchTab(which) {
+      document.getElementById('loginForm').classList.toggle('active', which === 'login');
+      document.getElementById('registerForm').classList.toggle('active', which === 'register');
+      document.getElementById('tabLogin').classList.toggle('active', which === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', which === 'register');
+      setStatus('');
+    }
+
+    function setStatus(msg, type) {
+      const el = document.getElementById('status');
+      el.textContent = msg;
+      el.className = 'status' + (type ? ' ' + type : '');
+    }
+
+    function setLoading(form, loading) {
+      form.querySelector('button[type="submit"]').disabled = loading;
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const form = e.target;
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      setStatus('CONNECTING...', '');
+      setLoading(form, true);
+      try {
+        await loginUser(username, password);
+        setStatus('ACCESS GRANTED', 'ok');
+        setTimeout(() => { window.location.href = 'game.html'; }, 500);
+      } catch (err) {
+        setStatus(err.message.toUpperCase(), 'error');
+      } finally {
+        setLoading(form, false);
+      }
+      return false;
+    }
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const form = e.target;
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value;
+      setStatus('CREATING PLAYER...', '');
+      setLoading(form, true);
+      try {
+        await registerUser(username, password);
+        setStatus('PLAYER CREATED', 'ok');
+        setTimeout(() => { window.location.href = 'game.html'; }, 500);
+      } catch (err) {
+        setStatus(err.message.toUpperCase(), 'error');
+      } finally {
+        setLoading(form, false);
+      }
+      return false;
+    }
+
+    // Nếu đã có token hợp lệ, bỏ qua màn login
+    if (typeof isLoggedIn === 'function' && isLoggedIn()) {
+      // window.location.href = 'game.html'; // bật lại khi có game.html thật
+    }
+  </script>
+</body>
+</html>

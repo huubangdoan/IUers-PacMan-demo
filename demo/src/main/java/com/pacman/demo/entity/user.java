@@ -11,9 +11,9 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "User")
-@Data                        
-public class user{
+@Table(name = "users")
+@Data
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID")
@@ -21,9 +21,6 @@ public class user{
 
     @Column(name = "Username", nullable = false, unique = true, length = 50)
     private String username;
-
-    @Column(name = "email", nullable = false, unique = true, length = 100)
-    private String email;
 
     @Column(name = "password", nullable = false)
     private String password;

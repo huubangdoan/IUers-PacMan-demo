@@ -11,17 +11,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pacman.demo.entity.user;
-import com.pacman.demo.service.userService;
+import com.pacman.demo.entity.User;
+import com.pacman.demo.service.UserService;
 import com.pacman.demo.util.JwtUtil;
 
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*") // 2. Thêm dòng này để mở chặn CORS từ mọi nguồn (hoặc cụ thể http://127.0.0.1:5500)
-public class authController {
+public class AuthController {
 
     @Autowired
-    private userService userService;
+    private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -31,7 +31,7 @@ public class authController {
 
     @PostMapping("/register")
     public Map<String, String> register(@RequestBody Map<String, String> body) {
-        user user = userService.register(body.get("username"), body.get("password"));
+        User user = userService.register(body.get("username"), body.get("password"));
         String token = jwtUtil.generateToken(user.getUsername());
         return Map.of("token", token);
     }
@@ -41,7 +41,7 @@ public class authController {
         String username = body.get("username");
         String password = body.get("password");
 
-        Optional<user> userOpt = userService.findByUsername(username);
+        Optional<User> userOpt = userService.findByUsername(username);
         if (userOpt.isEmpty() || !passwordEncoder.matches(password, userOpt.get().getPassword())) {
             throw new RuntimeException("Sai tài khoản hoặc mật khẩu");
         }

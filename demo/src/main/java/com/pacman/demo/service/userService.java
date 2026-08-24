@@ -1,34 +1,36 @@
 package com.pacman.demo.service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.pacman.demo.entity.user;
-import com.pacman.demo.repository.userRepository;
+import com.pacman.demo.entity.User;
+import com.pacman.demo.repository.UserRepository;
 
 @Service
-public class userService {
+public class UserService {
 
     @Autowired
-    private userRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public user register(String username, String rawPassword) {
+    public User register(String username, String rawPassword) {
         if (userRepository.findByUsername(username).isPresent()) {
             throw new RuntimeException("Username đã tồn tại");
         }
-        user user = new user();
+        User user = new User();
         user.setUsername(username);
         user.setPassword(passwordEncoder.encode(rawPassword)); 
+        user.setCreateAt(LocalDateTime.now());
+        user.setCreateAt(LocalDateTime.now());
         return userRepository.save(user);
     }
-
-    public Optional<user> findByUsername(String username) {
+    public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }
 }
