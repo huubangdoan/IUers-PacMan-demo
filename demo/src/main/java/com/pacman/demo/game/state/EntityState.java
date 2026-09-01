@@ -18,4 +18,6 @@ public class EntityState {
     public static final int IN_HOUSE   = 1 << 11;
     public static final int STUNNED    = 1 << 12;
     public static final int FROZEN     = 1 << 13;
+    
+    public static final int IMMOBILIZE_MASK = STUNNED | FROZEN;
 }
