@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.pacman.demo.game.behaviour.Moveable;
 import com.pacman.demo.game.state.EntityState;
+import com.pacman.demo.game.map.GameMap;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -62,7 +63,31 @@ public abstract class Character implements Moveable {
     }
 
     //move
+    @Override
+    public void move(GameMap map){
+        updateTimers();
+        if (isImmobilized()) return;
+        updateDirection(map);
+        performStep(map);
+    }
+    //abstract
+    public abstract void updateDirection(GameMap map);
+    public void performStep(GameMap map) {
+        int dx = getDx(direction);
+        int dy = getDy(direction);
+        int newX = getX() + dx * getSpeed();
+        int newY = getY() + dy * getSpeed();
 
+        if (!map.isWall(newX, newY)) {
+            setX(newX);
+            setY(newY);
+            setFlag(EntityState.MOVING);
+            clearFlag(EntityState.WAS_STUCK);
+        } else {
+            clearFlag(EntityState.MOVING);
+            setFlag(EntityState.WAS_STUCK);
+        }
+    }
     @Override
     public boolean isImmobilized() {
         return hasFlag(EntityState.IMMOBILIZE_MASK);
