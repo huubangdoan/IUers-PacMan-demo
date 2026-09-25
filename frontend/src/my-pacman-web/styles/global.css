@@ -1,0 +1,81 @@
+/* src/styles/global.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-green: #658c1a;
+  --light-green: #a3c963;
+  --sky-blue: #d4eaf7;
+  --deep-sky: #bfe3f9;
+  --text-dark: #2c3e2d;
+  --bg-light: #f7fafc;
+  --white: #ffffff;
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: var(--text-dark);
+  background-color: var(--bg-light);
+  line-height: 1.6;
+}
+
+/* Reusable Utility & Layout Classes */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.section-padding {
+  padding: 5rem 0;
+}
+
+/* Reusable Button */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 30px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-green);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(101, 140, 26, 0.3);
+}
+
+.btn-primary:hover {
+  background-color: #537315;
+  transform: translateY(-2px);
+}
+
+/* Reusable Card */
+.card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+}

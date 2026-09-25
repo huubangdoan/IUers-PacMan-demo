@@ -1,7 +1,7 @@
 // auth.js — module xác thực dùng chung cho mọi engine (Phaser, Unity WebGL, React, v.v.)
 // Đã được cập nhật để bắt chính xác định dạng lỗi JSON từ Spring Boot.
 
-const AUTH_API_BASE = "http://localhost:8080/api/auth"; // đổi khi deploy
+const AUTH_API_BASE = "http://localhost:9090/api/auth"; // đổi khi deploy
 const TOKEN_KEY = "pacman_jwt";
 
 /**

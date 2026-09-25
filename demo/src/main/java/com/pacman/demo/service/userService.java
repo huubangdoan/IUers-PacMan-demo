@@ -25,11 +25,11 @@ public class UserService {
         }
         User user = new User();
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(rawPassword)); 
-        user.setCreateAt(LocalDateTime.now());
-        user.setCreateAt(LocalDateTime.now());
+        user.setPasswordHash(passwordEncoder.encode(rawPassword));
+        user.setCreatedAt(LocalDateTime.now());
         return userRepository.save(user);
     }
+
     public Optional<User> findByUsername(String username) {
         return userRepository.findByUsername(username);
     }

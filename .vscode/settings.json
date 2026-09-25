@@ -16,5 +16,6 @@
             "database": "pacman_db",
             "username": "root"
         }
-    ]
+    ],
+    "java.debug.settings.onBuildFailureProceed": true
 }
